@@ -1,0 +1,17 @@
+version: '2'
+services:
+  mongodb:
+    image: mongo
+    restart: always
+    container_name: mongodb
+    environment:
+      - TZ=Asia/Shanghai
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root123456
+    ports:
+      - 7037:27017
+    volumes:
+      - /mnt/mongodb/configdb:/data/configdb
+      - /mnt/mongodb/db:/data/db
+      - /mnt/mongodb/initdb.d:/docker-entrypoint-initdb.d
+    command: mongod
