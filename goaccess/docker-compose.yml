@@ -15,7 +15,7 @@ services:
       - /var/lib/goaccess/goaccess.conf:/goaccess/goaccess.conf
       - /usr/local/nginx/logs/access.log:/goaccess/access.log
     command: [
-                 "/bin/goaccess",
+                 "goaccess",
                  "--no-global-config",
                  "--config-file=/goaccess/goaccess.conf",
                  "--real-time-html",
