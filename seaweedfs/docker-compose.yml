@@ -28,7 +28,7 @@ services:
     tty: true
     stdin_open: true
     volumes:
-      - '/var/lib/weedfs/filerdb:/data/filerdb'
+      - '/var/lib/weedfs/filer:/data'
     depends_on:
       - master
       - volume
