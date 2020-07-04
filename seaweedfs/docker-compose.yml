@@ -2,40 +2,48 @@ version: '2'
 
 services:
   master:
-    image: chrislusf/seaweedfs:1.77
+    image: chrislusf/seaweedfs:1.84 #use a remote image
+    restart: always
+    container_name: weedfs_master
     ports:
       - 9333:9333
       - 19333:19333
     command: "master -ip=master"
     volumes:
-      - '/var/lib/weedfs/master:/data'
+      - /var/lib/weedfs/master:/data
   volume:
-    image: chrislusf/seaweedfs:1.77
+    image: chrislusf/seaweedfs:1.84 # use a remote image
+    restart: always
+    container_name: weedfs_volume
     ports:
       - 9222:8080
       - 19222:18080
-    command: 'volume -mserver="master:9333" -port=8080 -publicUrl=/file -ip=volume'
-    volumes:
-      - '/var/lib/weedfs/volume:/data'
+    command: 'volume -mserver="master:9333" -port=8080 -publicUrl=/file'
     depends_on:
       - master
+    volumes:
+      - /var/lib/weedfs/volume:/data
   filer:
-    image: chrislusf/seaweedfs:1.77
+    image: chrislusf/seaweedfs:1.84 # use a remote image
+    restart: always
+    container_name: weedfs_filer
     ports:
       - 9255:8888
       - 19255:18888
     command: 'filer -master="master:9333"'
     tty: true
     stdin_open: true
-    volumes:
-      - '/var/lib/weedfs/filer:/data'
     depends_on:
       - master
       - volume
+    volumes:
+      - /var/lib/weedfs/filer:/data/filerldb2
   s3:
-    image: chrislusf/seaweedfs:1.77
+    image: chrislusf/seaweedfs:1.84 # use a remote image
+    restart: always
+    container_name: weedfs_s3
     ports:
-      - 9266:8333
+      - 8333:8333
     command: 's3 -filer="filer:8888"'
     depends_on:
       - master
