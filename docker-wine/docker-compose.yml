@@ -1,0 +1,16 @@
+version: '2'
+services:
+  app:
+    image: scottyhardy/docker-wine:latest
+    restart: always
+    working_dir: /app
+    container_name: app-windos
+    environment:
+      - TZ=Asia/Shanghai
+      - RUN_AS_ROOT=yes
+    ports:
+      - 8080:8080
+    volumes:
+      - /var/lib/app:/app
+      - /var/lib/app/log:/app/log
+    command: wine xxx.exe -console
