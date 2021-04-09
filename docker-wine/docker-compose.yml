@@ -3,14 +3,15 @@ services:
   app:
     image: scottyhardy/docker-wine:latest
     restart: always
-    working_dir: /app
-    container_name: app-windos
+    working_dir: /work
+    container_name: app
     environment:
-      - TZ=Asia/Shanghai
+      - LANG=zh_CN.UTF-8
       - RUN_AS_ROOT=yes
+      - TZ=UTC-8
+    privileged: true
     ports:
       - 8080:8080
     volumes:
-      - /var/lib/app:/app
-      - /var/lib/app/log:/app/log
-    command: wine xxx.exe -console
+      - /var/lib/work:/work
+    command: wine app.exe -console
