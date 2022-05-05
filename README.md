@@ -9,8 +9,4 @@ docker run -d --name emqx -p 6881:1883 -p 6882:8083 -p 6883:8883 -p 6884:8084 -p
 ```
 - 使用浏览器打开地址 http://127.0.0.1:6885 ，如需登录输入默认用户名 admin 与默认密码 public
 
-
-### consul-template
-```
-consul-template -consul-addr=localhost:8500 -template=/etc/nginx/conf.d/app_real_proxy.ctmpl:/etc/nginx/conf.d/app_real_proxy.conf:"/sbin/nginx -s reload" &
 ```
