@@ -1,0 +1,11 @@
+## Default Logstash configuration from logstash-docker.
+# https://www.elastic.co/guide/en/logstash/current/logstash-settings-file.html
+http.host: "0.0.0.0"
+xpack.monitoring.elasticsearch.hosts: [ "http://127.0.0.1:9200" ]
+xpack.monitoring.enabled: true
+
+config.reload.automatic: true
+
+## X-Pack security credentials
+xpack.monitoring.elasticsearch.username: elastic
+xpack.monitoring.elasticsearch.password: Password-2020

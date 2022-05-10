@@ -1,0 +1,47 @@
+# 集群名称
+cluster.name: es_cluster
+
+# 节点名称 *
+node.name: es_node1
+
+# 监听地址
+network.host: 0.0.0.0
+
+# 设置对外服务的http端口，默认为9200
+http.port: 7200
+
+# 设置节点之间交互的tcp端口，默认是9300
+transport.tcp.port: 7300
+
+# 其它节点可访问 *
+network.publish_host: 192.168.2.95
+
+# 开启跨域访问支持，默认为false
+#http.cors.enabled: true
+
+# 允许跨域的头
+#http.cors.allow-headers: Authorization
+
+# 跨域访问允许的域名地址，(允许所有域名)以上使用正则
+#http.cors.allow-origin: "*"
+
+# 禁用通配符删除索引
+action.destructive_requires_name: true
+
+
+# 避免内存交换，提高es性能
+bootstrap.memory_lock: true
+
+# 设置集群中master节点的初始列表，可以通过这些节点来自动发现新加入集群的节点 *
+# https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery-settings.html
+discovery.seed_hosts: ["192.168.2.95:7300","192.168.2.44"]
+
+cluster.initial_master_nodes: ["192.168.2.95:7300"]
+
+# 节点最大分片数，默认1000
+cluster.max_shards_per_node: 1000
+
+# 启用安全认证的功能
+xpack.security.enabled: true
+
+xpack.security.transport.ssl.enabled: true

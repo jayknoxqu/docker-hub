@@ -1,0 +1,1 @@
+select * from sys_user WHERE update_time >= :sql_last_value
