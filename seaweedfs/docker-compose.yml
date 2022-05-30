@@ -2,50 +2,91 @@ version: '2'
 
 services:
   master:
-    image: chrislusf/seaweedfs:1.84 #use a remote image
-    restart: always
+    image: chrislusf/seaweedfs:3.02
     container_name: weedfs_master
+    restart: always
     ports:
       - 9333:9333
       - 19333:19333
-    command: "master -ip=master"
     volumes:
-      - /var/lib/weedfs/master:/data
-  volume:
-    image: chrislusf/seaweedfs:1.84 # use a remote image
+      - ./weedfs/master:/data
+    command: "master -ip=master -port=9333 -volumeSizeLimitMB=1024"
+  volume1:
+    image: chrislusf/seaweedfs:3.02
+    container_name: weedfs_volume1
     restart: always
-    container_name: weedfs_volume
     ports:
-      - 9222:8080
-      - 19222:18080
-    command: 'volume -mserver="master:9333" -port=8080 -publicUrl=/file'
+      - 9222:9222
+      - 19222:19222
+      - 9325:9325
+    volumes:
+      - ./weedfs/volume1:/data
+    command: 'volume -mserver="master:9333" -port=9222 -publicUrl=/file1 -max=0 -metricsPort=9325'
     depends_on:
       - master
-    volumes:
-      - /var/lib/weedfs/volume:/data
-  filer:
-    image: chrislusf/seaweedfs:1.84 # use a remote image
+  volume2:
+    image: chrislusf/seaweedfs:3.02
+    container_name: weedfs_volume2
     restart: always
-    container_name: weedfs_filer
     ports:
-      - 9255:8888
-      - 19255:18888
-    command: 'filer -master="master:9333"'
+      - 9223:9223
+      - 19223:19223
+      - 9326:9326
+    volumes:
+      - ./weedfs/volume2:/data
+    command: 'volume -mserver="master:9333" -port=9223 -publicUrl=/file2 -max=0 -metricsPort=9326'
+    depends_on:
+      - master
+  filer:
+    image: chrislusf/seaweedfs:3.02
+    container_name: weedfs_filer
+    restart: always
+    ports:
+      - 8888:8888
+      - 18888:18888
+      - 9327:9327
+    volumes:
+      - ./weedfs/filer:/data/filerldb2
+    command: 'filer -master="master:9333" -metricsPort=9327'
     tty: true
     stdin_open: true
     depends_on:
       - master
-      - volume
-    volumes:
-      - /var/lib/weedfs/filer:/data/filerldb2
+      - volume1
+      - volume2
   s3:
-    image: chrislusf/seaweedfs:1.84 # use a remote image
-    restart: always
+    image: chrislusf/seaweedfs:3.02
     container_name: weedfs_s3
+    restart: always
     ports:
       - 8333:8333
-    command: 's3 -filer="filer:8888"'
+      - 9328:9328
+    command: 's3 -filer="filer:8888" -metricsPort=9328'
     depends_on:
       - master
-      - volume
+      - volume1
+      - volume2
       - filer
+  webdav:
+    image: chrislusf/seaweedfs:3.02
+    container_name: weedfs_webdav
+    restart: always
+    ports:
+      - 7333:7333
+    command: 'webdav -filer="filer:8888"'
+    depends_on:
+      - master
+      - volume1
+      - volume2
+      - filer
+  prometheus:
+    image: prom/prometheus:v2.21.0
+    container_name: weedfs_prometheus
+    restart: always
+    ports:
+      - 9000:9090
+    volumes:
+      - ./weedfs/prometheus:/etc/prometheus
+    command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml
+    depends_on:
+      - s3
